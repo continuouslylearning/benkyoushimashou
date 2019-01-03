@@ -1,0 +1,19 @@
+{
+  "name": "benkyoushimashou",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "ioredis": "^4.3.0",
+    "jsonwebtoken": "^8.4.0",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Timothy Chang",
+  "license": "ISC"
+}

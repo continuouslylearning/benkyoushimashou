@@ -5,7 +5,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
-const { initializeDb } = require('./db-redis');
+const { initializeDb } = require('./redis');
 
 const app = express();
 
