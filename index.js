@@ -13,7 +13,7 @@ const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 const questionsRouter = require('./routes/questions');
 
-const jwtAuth = require('./strategies/jwt');
+const jwtAuth = require('./authentication/jwt');
 
 app.use(morgan('common'));
 app.use(cors({ origin: CLIENT_ORIGIN }));

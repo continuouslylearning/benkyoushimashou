@@ -1,4 +1,4 @@
-const { redis } = require('..//redis');
+const { redis } = require('../redis');
 const bcrypt = require('bcryptjs');
 
 module.exports = async function localAuth(req, res, next){
