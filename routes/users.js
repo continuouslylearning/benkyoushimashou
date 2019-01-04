@@ -12,42 +12,47 @@ router.post('/', async (req, res, next) => {
 
   const missingField = requiredFields.find(field => ! (field in req.body));
 
-  if(missingField) {
-    const err = new Error(`Missing ${missingField} field`);
-    err.status = 400;
-    return next(err);
-  }
-
-  const fieldSizes = {
-    username: {
-      min: 5
-    },
-    password: {
-      min: 6,
-      max: 72
-    }
-  };
-
-  const tooSmallField = Object.keys(fieldSizes).find(
-    field => 'min' in fieldSizes[field] && req.body[field].trim().length < fieldSizes[field].min
-  );
-  const tooLargeField = Object.keys(fieldSizes).find(
-    field => 'max' in fieldSizes[field] && req.body[field].trim().length > fieldSizes[field].max
-  );
-
-  if(tooSmallField || tooLargeField){
-    const message = tooSmallField 
-      ? `${tooSmallField} must be at least ${fieldSizes[tooSmallField].min} characters long`
-      : `${tooLargeField} must be at most ${fieldSizes[tooLargeField].max} characters long`;
-    const err = new Error(message);
-    err.status = 400;
-    return next(err);
-  }
-
   try {
-    const existingPassword = await redis.hget( 'users:', username.toLowerCase());
 
-    if(existingPassword){
+    if(missingField) {
+      throw {
+        message: `Missing ${missingField} field`,
+        status: 400
+      };
+    }
+
+    const fieldSizes = {
+      username: {
+        min: 5
+      },
+      password: {
+        min: 6,
+        max: 72
+      }
+    };
+
+    const tooSmallField = Object.keys(fieldSizes).find(
+      field => 'min' in fieldSizes[field] && req.body[field].trim().length < fieldSizes[field].min
+    );
+    const tooLargeField = Object.keys(fieldSizes).find(
+      field => 'max' in fieldSizes[field] && req.body[field].trim().length > fieldSizes[field].max
+    );
+
+    if(tooSmallField || tooLargeField){
+      const message = tooSmallField 
+        ? `${tooSmallField} must be at least ${fieldSizes[tooSmallField].min} characters long`
+        : `${tooLargeField} must be at most ${fieldSizes[tooLargeField].max} characters long`;
+
+      throw {
+        message,
+        status: 400
+      };
+    }
+
+
+    const existingUser = await redis.hget( 'users:', username.toLowerCase());
+
+    if(existingUser){
       throw {
         message: 'Username already exists',
         status: 400

@@ -31,8 +31,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   if (err.status) {
     return res.status(err.status).json({
-      message: err.message,
-      status: err.status
+      message: err.message
     });
   } else {
     console.error(err);
