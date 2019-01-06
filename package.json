@@ -13,7 +13,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js"
   },
   "author": "Timothy Chang",
   "license": "ISC"
