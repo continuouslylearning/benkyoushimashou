@@ -5,8 +5,6 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
-const { initializeDb } = require('./redis');
-
 const app = express();
 
 const usersRouter = require('./routes/users');
@@ -44,7 +42,7 @@ app.use((err, req, res, next) => {
 function runServer(port = PORT) {
   const server = app
     .listen(port, () => {
-      console.info(`App is listening on port ${server.address().port}`);
+      console.info(`Listening on port ${server.address().port}`);
     })
     .on('error', err => {
       console.error(err);
@@ -52,8 +50,7 @@ function runServer(port = PORT) {
 }
 
 if (require.main === module) {
-  initializeDb()
-    .then(() => runServer());
+  runServer();
 }
 
 module.exports = app;
