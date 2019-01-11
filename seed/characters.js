@@ -343,5 +343,105 @@ module.exports = [
     character: 'ノ',
     system: 'katakana',
     romaji: 'no'
+  },
+  {
+    character: 'ハ',
+    system: 'katakana',
+    romaji: 'ha'
+  },
+  {
+    character: 'ヒ',
+    system: 'katakana',
+    romaji: 'hi'
+  },  
+  {
+    character: 'フ',
+    system: 'katakana',
+    romaji: 'fu'
+  },  
+  {
+    character: 'ヘ',
+    system: 'katakana',
+    romaji: 'he'
+  },  
+  {
+    character: 'ホ',
+    system: 'katakana',
+    romaji: 'ho'
+  },  
+  {
+    character: 'マ',
+    system: 'katakana',
+    romaji: 'mu'
+  },  
+  {
+    character: 'ミ',
+    system: 'katakana',
+    romaji: 'mi'
+  },  
+  {
+    character: 'ム',
+    system: 'katakana',
+    romaji: 'mu'
+  },  
+  {
+    character: 'メ',
+    system: 'katakana',
+    romaji: 'me'
+  },  
+  {
+    character: 'モ',
+    system: 'katakana',
+    romaji: 'mo'
+  },  
+  {
+    character: 'ヤ',
+    system: 'katakana',
+    romaji: 'ya'
+  },  
+  {
+    character: 'ユ',
+    system: 'katakana',
+    romaji: 'yu'
+  },  
+  {
+    character: 'ヨ',
+    system: 'katakana',
+    romaji: 'yo'
+  },  
+  {
+    character: 'ラ',
+    system: 'katakana',
+    romaji: 'ra'
+  },  
+  {
+    character: 'リ',
+    system: 'katakana',
+    romaji: 'ri'
+  },  
+  {
+    character: 'ル',
+    system: 'katakana',
+    romaji: 'ru'
+  },  
+  {
+    character: 'レ',
+    system: 'katakana',
+    romaji: 're'
+  },  
+  {
+    character: 'ロ',
+    system: 'katakana',
+    romaji: 'ro'
+  },  
+  {
+    character: 'ワ',
+    system: 'katakana',
+    romaji: 'wa'
+  },  
+  {
+    character: 'ン',
+    system: 'katakana',
+    romaji: 'n'
   }
 ];

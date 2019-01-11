@@ -13,6 +13,14 @@ router.post('/', async (req, res, next) => {
   const missingField = requiredFields.find(field => ! (field in req.body));
 
   try {
+    const trimmedFields = ['email', 'password'];
+    const nonTrimmedFields = trimmedFields.find(field => field in req.body && (req.body[field].trim() !== req.body[field]));
+    if(nonTrimmedFields){
+      throw {
+        message: `${nonTrimmedFields} cannot start or end with whitespace`,
+        status: 400
+      };
+    }
 
     if(missingField) {
       throw {
@@ -48,7 +56,6 @@ router.post('/', async (req, res, next) => {
         status: 400
       };
     }
-
 
     const existingUser = await redis.hget( 'users:', username.toLowerCase());
 

@@ -49,8 +49,8 @@ router.put('/', express.json(), async (req, res, next) => {
     pipeline.hset(`scores:${id}`, head, newScore);
     await pipeline.exec();
 
-    const scores = await redis.hgetall(`scores:${id}`);
-    return res.json(scores);
+    // const scores = await redis.hgetall(`scores:${id}`);
+    return res.sendStatus(204);
   } catch(e) {
     return next(e);
   }
