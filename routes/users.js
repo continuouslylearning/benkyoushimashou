@@ -4,92 +4,94 @@ const bcrypt = require('bcryptjs');
 const characters = require('../seed/characters');
 
 const router = express.Router();
+
 router.use(express.json());
 
 router.post('/', async (req, res, next) => {
-  const { username, password } = req.body;
-  const requiredFields = ['username', 'password'];
+	const { username, password } = req.body;
+	const requiredFields = ['username', 'password'];
 
-  const missingField = requiredFields.find(field => ! (field in req.body));
+	const missingField = requiredFields.find(field => ! (field in req.body));
 
-  try {
-    const trimmedFields = ['email', 'password'];
-    const nonTrimmedFields = trimmedFields.find(field => field in req.body && (req.body[field].trim() !== req.body[field]));
-    if(nonTrimmedFields){
-      throw {
-        message: `${nonTrimmedFields} cannot start or end with whitespace`,
-        status: 400
-      };
-    }
+	try {
+		const trimmedFields = ['email', 'password'];
+		const nonTrimmedFields = trimmedFields.find(field => field in req.body && (req.body[field].trim() !== req.body[field]));
 
-    if(missingField) {
-      throw {
-        message: `Missing ${missingField} field`,
-        status: 400
-      };
-    }
+		if (nonTrimmedFields) {
+			throw {
+				message: `${nonTrimmedFields} cannot start or end with whitespace`,
+				status: 400
+			};
+		}
 
-    const fieldSizes = {
-      username: {
-        min: 5
-      },
-      password: {
-        min: 6,
-        max: 72
-      }
-    };
+		if (missingField) {
+			throw {
+				message: `Missing ${missingField} field`,
+				status: 400
+			};
+		}
 
-    const tooSmallField = Object.keys(fieldSizes).find(
-      field => 'min' in fieldSizes[field] && req.body[field].trim().length < fieldSizes[field].min
-    );
-    const tooLargeField = Object.keys(fieldSizes).find(
-      field => 'max' in fieldSizes[field] && req.body[field].trim().length > fieldSizes[field].max
-    );
+		const fieldSizes = {
+			username: {
+				min: 5
+			},
+			password: {
+				min: 6,
+				max: 72
+			}
+		};
 
-    if(tooSmallField || tooLargeField){
-      const message = tooSmallField 
-        ? `${tooSmallField} must be at least ${fieldSizes[tooSmallField].min} characters long`
-        : `${tooLargeField} must be at most ${fieldSizes[tooLargeField].max} characters long`;
+		const tooSmallField = Object.keys(fieldSizes).find(
+			field => 'min' in fieldSizes[field] && req.body[field].trim().length < fieldSizes[field].min
+		);
+		const tooLargeField = Object.keys(fieldSizes).find(
+			field => 'max' in fieldSizes[field] && req.body[field].trim().length > fieldSizes[field].max
+		);
 
-      throw {
-        message,
-        status: 400
-      };
-    }
+		if (tooSmallField || tooLargeField) {
+			const message = tooSmallField 
+				? `${tooSmallField} must be at least ${fieldSizes[tooSmallField].min} characters long`
+				: `${tooLargeField} must be at most ${fieldSizes[tooLargeField].max} characters long`;
 
-    const existingUser = await redis.hget( 'users:', username.toLowerCase());
+			throw {
+				message,
+				status: 400
+			};
+		}
 
-    if(existingUser){
-      throw {
-        message: 'Username already exists',
-        status: 400
-      };
-    }
+		const existingUser = await redis.hget( 'users:', username.toLowerCase());
 
-    const [ hash, id ] = await Promise.all([bcrypt.hash(password, 10), redis.incr('users:id')]);
-    const listKey = `list:${id}`;
-    const hashKey = `scores:${id}`;
-    const pipeline = redis.multi();
+		if (existingUser) {
+			throw {
+				message: 'Username already exists',
+				status: 400
+			};
+		}
 
-    pipeline.hset('users:', username.toLowerCase(), id);
+		const [ hash, id ] = await Promise.all([bcrypt.hash(password, 10), redis.incr('users:id')]);
+		const listKey = `list:${id}`;
+		const hashKey = `scores:${id}`;
+		const pipeline = redis.multi();
 
-    pipeline.hmset(`user:${id}`, {
-      id,
-      username,
-      password: hash
-    });
+		pipeline.hset('users:', username.toLowerCase(), id);
 
-    characters.forEach(({ romaji, system }) => {
-      pipeline.rpush(listKey,`${system}:${romaji}`);
-      pipeline.hset(hashKey, `${system}:${romaji}`, 1);
-    });
+		pipeline.hmset(`user:${id}`, {
+			id,
+			username,
+			password: hash
+		});
 
-    await pipeline.exec();
-    
-    return res.status(201).json({ username, id });
-  } catch(e){
-    next(e);
-  }
+		characters.forEach(({ romaji, system }) => {
+			pipeline.rpush(listKey,`${system}:${romaji}`);
+			pipeline.hset(hashKey, `${system}:${romaji}`, 1);
+		});
+
+		await pipeline.exec();
+		
+		return res.status(201).json({ username, id });
+	} catch(e) {
+		next(e);
+	}
 });
 
 module.exports = router;
